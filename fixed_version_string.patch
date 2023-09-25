@@ -1,0 +1,36 @@
+Subject: [PATCH] Replace function call to build ref string from git calls with environment variable `VERSION_STRING` which needs to be set in the derivation.
+---
+Index: tools/build/dist.mjs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tools/build/dist.mjs b/tools/build/dist.mjs
+--- a/tools/build/dist.mjs	(revision a05a9c89c3ff4d05a93536f36272010a0b36c2be)
++++ b/tools/build/dist.mjs	(date 1695674128347)
+@@ -28,7 +28,7 @@
+ 
+ await $`zx tools/build_writefile.mjs`
+ 
+-const buildString = await generateVersionString()
++const buildString = process.env.VERSION_STRING
+ 
+ // Trash old
+ await fs.remove('dist')
+Index: tools/build_writefile.mjs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tools/build_writefile.mjs b/tools/build_writefile.mjs
+--- a/tools/build_writefile.mjs	(revision a05a9c89c3ff4d05a93536f36272010a0b36c2be)
++++ b/tools/build_writefile.mjs	(date 1695674106152)
+@@ -2,7 +2,7 @@
+ 
+ import { generateVersionString } from './lib.mjs'
+ 
+-const build = await generateVersionString()
++const build = process.env.VERSION_STRING
+ console.log('Writing BUILD:', build)
+ 
+ await fs.writeFile(new URL('../BUILD', import.meta.url), build)

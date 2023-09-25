@@ -1,6 +1,22 @@
 Subject: [PATCH] Remove vendored respawn dependency, as the `link:` syntax doesn't seem to be supported by yarn2nix.
 This dependency needs to be manually copied into `node_modules` from the `vendor` dir before the `build` phase.
 ---
+Index: package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/package.json b/package.json
+--- a/package.json	(revision a05a9c89c3ff4d05a93536f36272010a0b36c2be)
++++ b/package.json	(date 1695673111998)
+@@ -87,7 +87,6 @@
+ 		"p-queue": "^7.3.4",
+ 		"path-to-regexp": "^6.2.1",
+ 		"pngjs": "^3.3.3",
+-		"respawn": "link:./vendor/respawn",
+ 		"selfsigned": "^2.1.1",
+ 		"semver": "^7.5.1",
+ 		"sharp": "^0.32.0",
 Index: yarn.lock
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
@@ -8,7 +24,7 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 ===================================================================
 diff --git a/yarn.lock b/yarn.lock
 --- a/yarn.lock	(revision a05a9c89c3ff4d05a93536f36272010a0b36c2be)
-+++ b/yarn.lock	(date 1695668481596)
++++ b/yarn.lock	(date 1695673149777)
 @@ -4802,10 +4802,6 @@
      path-parse "^1.0.7"
      supports-preserve-symlinks-flag "^1.0.0"

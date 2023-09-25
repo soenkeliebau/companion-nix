@@ -1,14 +1,20 @@
 { lib
-, git
 , applyPatches
-, mkYarnPackage
-, fetchYarnDeps
+, stdenv
 , fetchFromGitHub
+, fetchYarnDeps
+, prefetch-yarn-deps
+, nodejs
+, nodejs-slim
+, matrix-sdk-crypto-nodejs
+, nixosTests
+, nix-update-script
 }:
 
-mkYarnPackage rec {
+let
     pname = "companion";
     version = "v3.0.1";
+    version_string = "v3.0.1+6068-stable-a05a9c89";
 
     src = applyPatches {
         src = fetchFromGitHub {
@@ -17,19 +23,39 @@ mkYarnPackage rec {
             rev = version;
             hash = "sha256-x1C0sVpvqUhKLTa0bxuueK6PbVdxYysSpVimcPPGsro=";
         };
-        patches = [ ./remove_vendored_respawn.patch ];
+        patches = [ ./remove_vendored_respawn.patch ./fixed_version_string.patch ];
     };
 
-    packageJSON = "${src}/package.json";
-    offlineCache = fetchYarnDeps {
+    yarnOfflineCache = fetchYarnDeps {
         yarnLock = "${src}/yarn.lock";
         hash = "sha256-KWUlyiz2+mu6ve567KUfsnHis2m4FgpqjX80lt+ress=";
     };
 
-    extraBuildInputs = [ git ];
+in
+stdenv.mkDerivation rec {
+    inherit pname version src yarnOfflineCache;
+
+    nativeBuildInputs = [
+        prefetch-yarn-deps
+        nodejs-slim
+        nodejs.pkgs.yarn
+        nodejs.pkgs.node-gyp-build
+    ];
+
+    configurePhase = ''
+        runHook preConfigure
+
+        export HOME=$(mktemp -d)
+        export VERSION_STRING=""
+        yarn config --offline set yarn-offline-mirror "$yarnOfflineCache"
+        fixup-yarn-lock yarn.lock
+        yarn install --frozen-lockfile --offline --no-progress --non-interactive --ignore-scripts
+        patchShebangs node_modules/ bin/
+
+        runHook postConfigure
+    '';
 
     buildPhase = ''
-        export HOME=$(mktemp -d)
         runHook preBuild
 
         yarn --offline build:writefile
