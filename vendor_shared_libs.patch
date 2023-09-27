@@ -1,0 +1,46 @@
+Subject: [PATCH] Replace function call to build ref string from git calls with environment variable `VERSION_STRING` which needs to be set in the derivation.
+---
+Index: webui/yarn.lock
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/webui/yarn.lock b/webui/yarn.lock
+--- a/webui/yarn.lock	(revision a05a9c89c3ff4d05a93536f36272010a0b36c2be)
++++ b/webui/yarn.lock	(date 1695742256665)
+@@ -1084,10 +1084,6 @@
+   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
+   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
+ 
+-"@companion/shared@link:../lib/Shared":
+-  version "0.0.0"
+-  uid ""
+-
+ "@coreui/coreui@^3.4.0":
+   version "3.4.0"
+   resolved "https://registry.yarnpkg.com/@coreui/coreui/-/coreui-3.4.0.tgz#3e3627a1f48a00f6289204a23f71eaa6ea94e370"
+@@ -1414,7 +1410,7 @@
+ 
+ "@hello-pangea/color-picker@https://github.com/Julusian/color-picker/releases/download/v3.3.0-julusian.0/hello-pangea-color-picker-v3.3.0-julusian.0.tgz":
+   version "3.3.0-julusian.0"
+-  resolved "https://github.com/Julusian/color-picker/releases/download/v3.3.0-julusian.0/hello-pangea-color-picker-v3.3.0-julusian.0.tgz#3e7c21fe937fb21379e79b7b671666c54c2f9639"
++  resolved "https://github.com/Julusian/color-picker/releases/download/v3.3.0-julusian.0/hello-pangea-color-picker-v3.3.0-julusian.0.tgz#da39a3ee5e6b4b0d3255bfef95601890afd80709"
+   dependencies:
+     "@babel/runtime" "^7.20.1"
+     lodash "^4.17.21"
+Index: webui/package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/webui/package.json b/webui/package.json
+--- a/webui/package.json	(revision a05a9c89c3ff4d05a93536f36272010a0b36c2be)
++++ b/webui/package.json	(date 1695742423040)
+@@ -3,7 +3,6 @@
+   "version": "0.0.0",
+   "private": true,
+   "dependencies": {
+-    "@companion/shared": "link:../lib/Shared",
+     "@coreui/coreui": "^3.4.0",
+     "@coreui/react": "^3.4.6",
+     "@fontsource/fira-code": "^4.5.13",
