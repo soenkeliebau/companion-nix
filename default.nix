@@ -1,4 +1,6 @@
 { lib
+, pkgs
+, fetchurl
 , applyPatches
 , stdenv
 , fetchFromGitHub
@@ -37,6 +39,11 @@ let
         hash = "sha256-fIOt8710tQhrJr1srUa0QSNDyWwegmqYE21YL/VWRSw=";
     };
 
+    annoyingBrokenDependency = fetchurl {
+        url = "https://github.com/Julusian/color-picker/releases/download/v3.3.0-julusian.0/hello-pangea-color-picker-v3.3.0-julusian.0.tgz";
+        hash = "sha256-U4CalVlROOuQDDtSh7qisibSg8xEH8p14xoUzwvYSvE=";
+    };
+
 in
 stdenv.mkDerivation rec {
     inherit pname version src yarnOfflineCache uiYarnOfflineCache;
@@ -46,6 +53,9 @@ stdenv.mkDerivation rec {
         nodejs-slim
         nodejs.pkgs.yarn
         nodejs.pkgs.node-gyp-build
+        pkgs.libusb1
+        pkgs.hidapi
+        pkgs.udev
     ];
 
     configurePhase = ''
@@ -72,6 +82,11 @@ stdenv.mkDerivation rec {
         # Copy vendored lib
         mkdir webui/node_modules/@companion
         cp --recursive ${src}/lib/Shared webui/node_modules/@companion/shared
+
+        # Sideload annoying lib that fetchYarnDeps downloads with 0 byte for some reason
+        rm -rf webui/node_modules/@hello-pangea
+        mkdir -p webui/node_modules/@hello-pangea/color-picker
+        tar xvfz ${annoyingBrokenDependency} -C webui/node_modules/@hello-pangea/color-picker/ --strip-components=1
 
         patchShebangs webui/node_modules/ webui/bin/
         runHook postConfigure
